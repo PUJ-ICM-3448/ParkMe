@@ -1,8 +1,8 @@
 package com.example.parkme.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
+import com.example.parkme.data.mock.MockParkingData
 import com.example.parkme.ui.screens.*
 
 @Composable
@@ -40,23 +40,35 @@ fun AppNavigation() {
         }
 
         composable(Routes.PROFILE) {
-            ProfileScreen()
+            ProfileScreen(navController)
         }
 
-        composable(
-            "${Routes.PARKING_DETAIL}/{parkingId}"
-        ) { backStackEntry ->
+        composable("${Routes.PARKING_DETAIL}/{parkingId}") { backStackEntry ->
 
-            val parkingId = backStackEntry.arguments?.getString("parkingId") ?: ""
+            val parkingId =
+                backStackEntry.arguments?.getString("parkingId") ?: ""
 
             ParkingDetailScreen(
                 navController = navController,
                 parkingId = parkingId
             )
+        }
 
+        composable("${Routes.RESERVATION}/{parkingId}") { backStackEntry ->
+
+            val parkingId =
+                backStackEntry.arguments?.getString("parkingId")?.toInt() ?: 0
+
+            val parking =
+                MockParkingData.getParkingById(parkingId)
+
+            ReservationScreen(
+                navController = navController,
+                parkingId = parkingId,
+                parkingName = parking?.name ?: ""
+            )
         }
 
     }
 
 }
-

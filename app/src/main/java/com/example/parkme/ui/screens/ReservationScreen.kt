@@ -6,9 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.parkme.data.mock.MockAuth
-import com.example.parkme.data.mock.MockReservationData
-import com.example.parkme.data.mock.MockParkingData
+import com.example.parkme.data.mock.*
 import com.example.parkme.data.model.Reservation
 import com.example.parkme.navigation.Routes
 
@@ -21,32 +19,22 @@ fun ReservationScreen(
 ) {
 
     Scaffold(
-
         topBar = {
-            TopAppBar(
-                title = { Text("Reserva") }
-            )
+            TopAppBar(title = { Text("Reserva") })
         }
-
-    ) { paddingValues ->
+    ) { padding ->
 
         Column(
             modifier = Modifier
-                .padding(paddingValues)
+                .padding(padding)
                 .padding(20.dp)
         ) {
 
-            Text(
-                text = "Reservar parqueadero",
-                style = MaterialTheme.typography.headlineMedium
-            )
+            Text("Reservar parqueadero")
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            Text(
-                text = parkingName,
-                style = MaterialTheme.typography.titleLarge
-            )
+            Text(parkingName)
 
             Spacer(modifier = Modifier.height(30.dp))
 
@@ -54,36 +42,35 @@ fun ReservationScreen(
                 onClick = {
 
                     val user = MockAuth.currentUser
-
                     val parking =
-                        MockParkingData.parkingList.find { it.id == parkingId }
+                        MockParkingData.getParkingById(parkingId)
 
-                    if (user != null && parking != null && parking.availableSpots > 0) {
+                    if (user != null && parking != null) {
 
-                        val reservation = Reservation(
-                            id = System.currentTimeMillis().toInt(),
-                            parkingId = parkingId,
-                            userName = user.name,
-                            plate = user.plate
-                        )
+                        val available =
+                            parking.totalSpaces - parking.occupiedSpaces
 
-                        MockReservationData.addReservation(reservation)
+                        if (available > 0) {
 
-                        parking.availableSpots--
+                            val reservation = Reservation(
+                                id = System.currentTimeMillis().toInt(),
+                                parkingId = parkingId,
+                                userName = user.name,
+                                plate = user.plate
+                            )
 
+                            MockReservationData.addReservation(reservation)
+
+                            parking.occupiedSpaces++
+                        }
                     }
 
                     navController.navigate(Routes.CLIENT_HOME)
 
                 }
             ) {
-
                 Text("Confirmar reserva")
-
             }
-
         }
-
     }
-
 }

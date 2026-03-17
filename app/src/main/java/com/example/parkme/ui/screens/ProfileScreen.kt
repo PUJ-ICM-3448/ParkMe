@@ -9,26 +9,30 @@ import androidx.compose.ui.*
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.parkme.R
 import com.example.parkme.data.mock.MockAuth
+import com.example.parkme.data.model.User
+import com.example.parkme.navigation.Routes
 
 @Composable
-fun ProfileScreen() {
+fun ProfileScreen(navController: NavController) {
 
-    val user = MockAuth.currentUser
+    val user = MockAuth.currentUser ?: return
 
-    var plate by remember { mutableStateOf(user?.plate ?: "") }
+    var name by remember { mutableStateOf(user.name) }
+    var plate by remember { mutableStateOf(user.plate) }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(20.dp),
+            .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
         Image(
-            painter = painterResource(id = R.drawable.profile_placeholder),
-            contentDescription = "profile",
+            painter = painterResource(R.drawable.profile_placeholder),
+            contentDescription = null,
             modifier = Modifier
                 .size(120.dp)
                 .clip(CircleShape)
@@ -36,31 +40,65 @@ fun ProfileScreen() {
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        Text(user?.name ?: "", style = MaterialTheme.typography.headlineSmall)
-
-        Text(user?.email ?: "")
+        Text(
+            text = user.email,
+            style = MaterialTheme.typography.bodyLarge
+        )
 
         Spacer(modifier = Modifier.height(20.dp))
 
         OutlinedTextField(
-            value = plate,
-            onValueChange = { plate = it },
-            label = { Text("Vehicle plate") }
+            value = name,
+            onValueChange = { name = it },
+            label = { Text("Name") }
         )
+
+        if(user.role == "CLIENT"){
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            OutlinedTextField(
+                value = plate,
+                onValueChange = { plate = it },
+                label = { Text("Vehicle plate") }
+            )
+
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Button(
+            onClick = {
+
+                val updatedUser = User(
+                    name = name,
+                    email = user.email,
+                    password = user.password,
+                    plate = plate,
+                    role = user.role
+                )
+
+                MockAuth.updateUser(updatedUser)
+
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Save changes")
+        }
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        Button(onClick = {
+        OutlinedButton(
+            onClick = {
 
-            user?.let {
-                MockAuth.currentUser =
-                    it.copy(plate = plate)
-            }
+                MockAuth.logout()
 
-        }) {
+                navController.navigate(Routes.LOGIN)
 
-            Text("Save plate")
-
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Logout")
         }
 
     }

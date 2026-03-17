@@ -35,7 +35,9 @@ fun ClientHomeScreen(navController: NavController) {
 
                     navigationIcon = {
 
-                        IconButton(onClick = { }) {
+                        IconButton(onClick = {
+                            navController.navigate(Routes.PROFILE)
+                        }) {
 
                             Icon(
                                 imageVector = Icons.Default.Menu,

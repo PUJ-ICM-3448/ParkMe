@@ -9,7 +9,7 @@ data class Parking(
 
     val ownerEmail: String,
 
-    var totalSpots: Int,
-    var availableSpots: Int
+    var totalSpaces: Int,
+    var occupiedSpaces: Int
 
 )

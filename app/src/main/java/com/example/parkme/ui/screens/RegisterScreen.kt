@@ -30,13 +30,39 @@ fun RegisterScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        OutlinedTextField(name, { name = it }, label = { Text("Name") })
+        OutlinedTextField(
+            value = name,
+            onValueChange = { name = it },
+            label = { Text("Name") }
+        )
 
-        OutlinedTextField(email, { email = it }, label = { Text("Email") })
+        Spacer(modifier = Modifier.height(10.dp))
 
-        OutlinedTextField(password, { password = it }, label = { Text("Password") })
+        OutlinedTextField(
+            value = email,
+            onValueChange = { email = it },
+            label = { Text("Email") }
+        )
 
-        OutlinedTextField(plate, { plate = it }, label = { Text("Vehicle plate") })
+        Spacer(modifier = Modifier.height(10.dp))
+
+        OutlinedTextField(
+            value = password,
+            onValueChange = { password = it },
+            label = { Text("Password") }
+        )
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        if(role == "CLIENT"){
+
+            OutlinedTextField(
+                value = plate,
+                onValueChange = { plate = it },
+                label = { Text("Vehicle plate") }
+            )
+
+        }
 
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -66,8 +92,11 @@ fun RegisterScreen(navController: NavController) {
 
         Button(onClick = {
 
+            val finalPlate =
+                if(role == "CLIENT") plate else ""
+
             MockAuth.register(
-                User(name, email, password, plate, role)
+                User(name,email,password,finalPlate,role)
             )
 
             if (role == "CLIENT")
