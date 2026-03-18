@@ -1,10 +1,13 @@
 package com.example.parkme.ui.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -18,61 +21,104 @@ fun LoginScreen(navController: NavController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .background(MaterialTheme.colorScheme.background),
+        contentAlignment = Alignment.Center
     ) {
 
-        Image(
-            painter = painterResource(id = R.drawable.parkme_logo),
-            contentDescription = "Logo",
-            modifier = Modifier.size(140.dp)
-        )
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp),
 
-        Spacer(modifier = Modifier.height(20.dp))
+            shape = RoundedCornerShape(20.dp),
 
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Email") }
-        )
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            ),
 
-        Spacer(modifier = Modifier.height(10.dp))
+            elevation = CardDefaults.cardElevation(8.dp)
+        ) {
 
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Password") }
-        )
+            Column(
+                modifier = Modifier.padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
 
-        Spacer(modifier = Modifier.height(20.dp))
+                // 🧠 LOGO
+                Image(
+                    painter = painterResource(id = R.drawable.parkme_logo),
+                    contentDescription = "Logo",
+                    modifier = Modifier.size(120.dp)
+                )
 
-        Button(onClick = {
+                Spacer(modifier = Modifier.height(16.dp))
 
-            val success = MockAuth.login(email, password)
+                // 🧠 TÍTULO
+                Text(
+                    text = "Bienvenido a ParkMe",
+                    style = MaterialTheme.typography.titleLarge
+                )
 
-            if (success) {
+                Spacer(modifier = Modifier.height(24.dp))
 
-                val role = MockAuth.currentUser?.role
+                // 📧 EMAIL
+                OutlinedTextField(
+                    value = email,
+                    onValueChange = { email = it },
+                    label = { Text("Email") },
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-                if (role == "CLIENT") {
-                    navController.navigate(Routes.CLIENT_HOME)
-                } else {
-                    navController.navigate(Routes.OWNER_HOME)
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // 🔒 PASSWORD
+                OutlinedTextField(
+                    value = password,
+                    onValueChange = { password = it },
+                    label = { Text("Password") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                // 🔵 BOTÓN LOGIN
+                Button(
+                    onClick = {
+
+                        val success = MockAuth.login(email, password)
+
+                        if (success) {
+
+                            val role = MockAuth.currentUser?.role
+
+                            if (role == "CLIENT") {
+                                navController.navigate(Routes.CLIENT_HOME)
+                            } else {
+                                navController.navigate(Routes.OWNER_HOME)
+                            }
+
+                        }
+
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Iniciar sesión")
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                // 🔗 REGISTRO
+                TextButton(onClick = {
+                    navController.navigate(Routes.REGISTER)
+                }) {
+                    Text("Crear cuenta")
                 }
 
             }
 
-        }) {
-            Text("Login")
-        }
-
-        TextButton(onClick = {
-            navController.navigate(Routes.REGISTER)
-        }) {
-            Text("Create account")
         }
 
     }

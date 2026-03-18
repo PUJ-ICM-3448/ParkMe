@@ -5,9 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Place
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.*
@@ -28,28 +26,46 @@ fun ClientHomeScreen(navController: NavController) {
         Scaffold(
 
             topBar = {
-
                 TopAppBar(
 
-                    title = { Text("ParkMe") },
+                    title = {
+                        Text(
+                            "ParkMe",
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    },
 
                     navigationIcon = {
-
                         IconButton(onClick = {
                             navController.navigate(Routes.PROFILE)
                         }) {
-
                             Icon(
                                 imageVector = Icons.Default.Menu,
                                 contentDescription = "Menu"
                             )
-
                         }
+                    },
 
-                    }
+                    actions = {
+                        IconButton(onClick = {
+                            navController.navigate(Routes.NOTIFICATIONS)
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.Notifications,
+                                contentDescription = "Notifications"
+                            )
+                        }
+                    },
+
+                    // 🎨 COLOR PRO
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                        navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+                        actionIconContentColor = MaterialTheme.colorScheme.onPrimary
+                    )
 
                 )
-
             }
 
         ) { paddingValues ->
@@ -57,6 +73,7 @@ fun ClientHomeScreen(navController: NavController) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background)
                     .padding(paddingValues)
             ) {
 
@@ -94,23 +111,26 @@ fun HomeBottomSheet(
 ) {
 
     Card(
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
+
+        // 🎨 CARD PRO
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+
+        elevation = CardDefaults.cardElevation(8.dp),
+
         shape = RoundedCornerShape(
             topStart = 24.dp,
             topEnd = 24.dp
-        ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 8.dp
         )
     ) {
 
         Column(
-            modifier = Modifier
-                .padding(24.dp)
+            modifier = Modifier.padding(24.dp)
         ) {
 
-            // Handle del bottom sheet
+            // 🔘 HANDLE
             Box(
                 modifier = Modifier
                     .width(40.dp)
@@ -124,9 +144,10 @@ fun HomeBottomSheet(
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            // 🧠 TÍTULO
             Text(
                 text = "Parqueaderos cerca",
-                style = MaterialTheme.typography.headlineSmall
+                style = MaterialTheme.typography.titleLarge
             )
 
             Spacer(modifier = Modifier.height(4.dp))
@@ -139,6 +160,7 @@ fun HomeBottomSheet(
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            // 🔍 BOTÓN PRINCIPAL
             Button(
                 onClick = {
                     navController.navigate(Routes.PARKING_LIST)
@@ -146,10 +168,7 @@ fun HomeBottomSheet(
                 modifier = Modifier.fillMaxWidth()
             ) {
 
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = "Buscar"
-                )
+                Icon(Icons.Default.Search, contentDescription = null)
 
                 Spacer(modifier = Modifier.width(8.dp))
 
@@ -159,6 +178,7 @@ fun HomeBottomSheet(
 
             Spacer(modifier = Modifier.height(12.dp))
 
+            // 📍 BOTÓN SECUNDARIO
             OutlinedButton(
                 onClick = {
                     navController.navigate(Routes.SEARCH_ADDRESS)
@@ -166,14 +186,29 @@ fun HomeBottomSheet(
                 modifier = Modifier.fillMaxWidth()
             ) {
 
-                Icon(
-                    imageVector = Icons.Default.Place,
-                    contentDescription = "Ubicación"
-                )
+                Icon(Icons.Default.Place, contentDescription = null)
 
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Text("Buscar por dirección")
+
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // 📋 RESERVAS
+            Button(
+                onClick = {
+                    navController.navigate(Routes.MY_RESERVATIONS)
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+
+                Icon(Icons.Default.List, contentDescription = null)
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Text("Ver mis reservas")
 
             }
 

@@ -69,6 +69,32 @@ fun AppNavigation() {
             )
         }
 
+        composable(Routes.NOTIFICATIONS) {
+            NotificationScreen()
+        }
+
+        composable("${Routes.CHAT}/{parkingId}") { backStackEntry ->
+
+            val id = backStackEntry.arguments?.getString("parkingId")?.toInt() ?: 0
+
+            ChatScreen(navController, id)
+        }
+
+        composable(Routes.MY_RESERVATIONS) {
+            MyReservationsScreen(navController)
+        }
+
+        composable("${Routes.OWNER_PARKING_DETAIL}/{parkingId}") { backStackEntry ->
+
+            val id = backStackEntry.arguments?.getString("parkingId")?.toInt() ?: 0
+
+            OwnerParkingDetailScreen(navController, id)
+        }
+
+        composable(Routes.ADD_PARKING) {
+            AddParkingScreen(navController)
+        }
+
     }
 
 }

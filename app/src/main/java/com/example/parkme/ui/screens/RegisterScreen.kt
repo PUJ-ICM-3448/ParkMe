@@ -1,9 +1,14 @@
 package com.example.parkme.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.parkme.data.mock.MockAuth
@@ -20,93 +25,157 @@ fun RegisterScreen(navController: NavController) {
 
     var role by remember { mutableStateOf("CLIENT") }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(20.dp)
+            .background(MaterialTheme.colorScheme.background),
+        contentAlignment = Alignment.Center
     ) {
 
-        Text("Create Account", style = MaterialTheme.typography.headlineMedium)
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp),
 
-        Spacer(modifier = Modifier.height(20.dp))
+            shape = RoundedCornerShape(20.dp),
 
-        OutlinedTextField(
-            value = name,
-            onValueChange = { name = it },
-            label = { Text("Name") }
-        )
+            elevation = CardDefaults.cardElevation(8.dp)
+        ) {
 
-        Spacer(modifier = Modifier.height(10.dp))
+            Column(
+                modifier = Modifier.padding(24.dp)
+            ) {
 
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Email") }
-        )
+                // 🧠 TÍTULO
+                Row(verticalAlignment = Alignment.CenterVertically) {
 
-        Spacer(modifier = Modifier.height(10.dp))
+                    Icon(Icons.Default.PersonAdd, contentDescription = null)
 
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Password") }
-        )
+                    Spacer(modifier = Modifier.width(8.dp))
 
-        Spacer(modifier = Modifier.height(10.dp))
+                    Text(
+                        text = "Crear cuenta",
+                        style = MaterialTheme.typography.titleLarge
+                    )
 
-        if(role == "CLIENT"){
+                }
 
-            OutlinedTextField(
-                value = plate,
-                onValueChange = { plate = it },
-                label = { Text("Vehicle plate") }
-            )
+                Spacer(modifier = Modifier.height(20.dp))
 
-        }
+                // 👤 NOMBRE
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text("Nombre") },
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-        Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
-        Text("Account type")
+                // 📧 EMAIL
+                OutlinedTextField(
+                    value = email,
+                    onValueChange = { email = it },
+                    label = { Text("Email") },
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-        Row {
+                Spacer(modifier = Modifier.height(12.dp))
 
-            RadioButton(
-                selected = role == "CLIENT",
-                onClick = { role = "CLIENT" }
-            )
+                // 🔒 PASSWORD
+                OutlinedTextField(
+                    value = password,
+                    onValueChange = { password = it },
+                    label = { Text("Password") },
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-            Text("Client")
+                // 🚗 PLACA SOLO CLIENT
+                if (role == "CLIENT") {
 
-            Spacer(modifier = Modifier.width(20.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
 
-            RadioButton(
-                selected = role == "OWNER",
-                onClick = { role = "OWNER" }
-            )
+                    OutlinedTextField(
+                        value = plate,
+                        onValueChange = { plate = it },
+                        label = { Text("Placa del vehículo") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
 
-            Text("Owner")
+                }
 
-        }
+                Spacer(modifier = Modifier.height(20.dp))
 
-        Spacer(modifier = Modifier.height(20.dp))
+                // 🧠 TIPO DE CUENTA
+                Text(
+                    text = "Tipo de cuenta",
+                    style = MaterialTheme.typography.bodyMedium
+                )
 
-        Button(onClick = {
+                Spacer(modifier = Modifier.height(10.dp))
 
-            val finalPlate =
-                if(role == "CLIENT") plate else ""
+                Row(verticalAlignment = Alignment.CenterVertically) {
 
-            MockAuth.register(
-                User(name,email,password,finalPlate,role)
-            )
+                    RadioButton(
+                        selected = role == "CLIENT",
+                        onClick = { role = "CLIENT" }
+                    )
 
-            if (role == "CLIENT")
-                navController.navigate(Routes.CLIENT_HOME)
-            else
-                navController.navigate(Routes.OWNER_HOME)
+                    Text("Cliente")
 
-        }) {
+                    Spacer(modifier = Modifier.width(20.dp))
 
-            Text("Register")
+                    RadioButton(
+                        selected = role == "OWNER",
+                        onClick = { role = "OWNER" }
+                    )
+
+                    Text("Owner")
+
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // 🚀 BOTÓN REGISTER
+                Button(
+                    onClick = {
+
+                        val finalPlate =
+                            if (role == "CLIENT") plate else ""
+
+                        MockAuth.register(
+                            User(name, email, password, finalPlate, role)
+                        )
+
+                        if (role == "CLIENT")
+                            navController.navigate(Routes.CLIENT_HOME)
+                        else
+                            navController.navigate(Routes.OWNER_HOME)
+
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                ) {
+
+                    Icon(Icons.Default.PersonAdd, contentDescription = null)
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Text("Crear cuenta")
+
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                // 🔙 VOLVER LOGIN
+                TextButton(onClick = {
+                    navController.navigate(Routes.LOGIN)
+                }) {
+                    Text("Ya tengo cuenta")
+                }
+
+            }
 
         }
 

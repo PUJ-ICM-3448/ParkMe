@@ -14,4 +14,8 @@ object MockReservationData {
         return reservations.filter { it.parkingId == parkingId }
     }
 
+    fun getAllReservations(): List<Reservation> {
+        return reservations
+    }
+
 }

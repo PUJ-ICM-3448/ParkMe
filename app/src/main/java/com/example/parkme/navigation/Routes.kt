@@ -16,4 +16,13 @@ object Routes {
     const val SEARCH_ADDRESS = "search_address"
 
     const val PROFILE = "profile"
+
+    const val CHAT = "chat"
+    const val NOTIFICATIONS = "notifications"
+
+    const val MY_RESERVATIONS = "my_reservations"
+
+    const val OWNER_PARKING_DETAIL = "owner_parking_detail"
+
+    const val ADD_PARKING = "add_parking"
 }

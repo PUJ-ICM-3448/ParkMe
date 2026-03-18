@@ -1,13 +1,19 @@
 package com.example.parkme.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.*
+import androidx.compose.ui.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.parkme.data.mock.*
-import com.example.parkme.data.model.Reservation
+import com.example.parkme.data.model.*
 import com.example.parkme.navigation.Routes
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -18,59 +24,114 @@ fun ReservationScreen(
     parkingName: String
 ) {
 
+    var hour by remember { mutableStateOf("") }
+
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Reserva") })
+            TopAppBar(
+                title = { Text("Confirmar reserva") }
+            )
         }
     ) { padding ->
 
         Column(
             modifier = Modifier
                 .padding(padding)
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
                 .padding(20.dp)
         ) {
 
-            Text("Reservar parqueadero")
+            // 🧠 CARD PARKING
+            Card(
+                shape = RoundedCornerShape(16.dp),
+                elevation = CardDefaults.cardElevation(6.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
 
-            Spacer(modifier = Modifier.height(20.dp))
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
 
-            Text(parkingName)
+                    Text(
+                        text = "Parqueadero",
+                        style = MaterialTheme.typography.labelMedium
+                    )
 
-            Spacer(modifier = Modifier.height(30.dp))
+                    Spacer(modifier = Modifier.height(6.dp))
 
+                    Text(
+                        text = parkingName,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+
+                }
+
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // 🕒 INPUT HORA
+            OutlinedTextField(
+                value = hour,
+                onValueChange = { hour = it },
+                label = { Text("Hora (Ej: 14:00)") },
+                leadingIcon = {
+                    Icon(Icons.Default.AccessTime, contentDescription = null)
+                },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(40.dp))
+
+            // 🚀 BOTÓN CONFIRMAR
             Button(
                 onClick = {
 
                     val user = MockAuth.currentUser
-                    val parking =
-                        MockParkingData.getParkingById(parkingId)
+                    val parking = MockParkingData.getParkingById(parkingId)
 
-                    if (user != null && parking != null) {
+                    if (user != null && parking != null && hour.isNotEmpty()) {
 
-                        val available =
-                            parking.totalSpaces - parking.occupiedSpaces
+                        val reservation = Reservation(
+                            id = System.currentTimeMillis().toInt(),
+                            parkingId = parkingId,
+                            userName = user.name,
+                            plate = user.plate,
+                            hour = hour
+                        )
 
-                        if (available > 0) {
+                        MockReservationData.addReservation(reservation)
 
-                            val reservation = Reservation(
+                        parking.occupiedSpaces++
+
+                        // 🔔 NOTIFICACIÓN
+                        MockNotificationData.addNotification(
+                            AppNotification(
                                 id = System.currentTimeMillis().toInt(),
-                                parkingId = parkingId,
-                                userName = user.name,
-                                plate = user.plate
+                                text = "${user.name} reservó en ${parking.name} - ${user.plate}",
+                                time = hour
                             )
-
-                            MockReservationData.addReservation(reservation)
-
-                            parking.occupiedSpaces++
-                        }
+                        )
                     }
 
                     navController.navigate(Routes.CLIENT_HOME)
 
-                }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(55.dp)
             ) {
+
+                Icon(Icons.Default.CheckCircle, contentDescription = null)
+
+                Spacer(modifier = Modifier.width(8.dp))
+
                 Text("Confirmar reserva")
+
             }
+
         }
+
     }
 }

@@ -1,9 +1,16 @@
 package com.example.parkme.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.Place
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
@@ -13,39 +20,80 @@ fun SearchByAddressScreen(navController: NavController) {
     var address by remember { mutableStateOf("") }
     var time by remember { mutableStateOf("") }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(20.dp)
+            .background(MaterialTheme.colorScheme.background),
+        contentAlignment = Alignment.Center
     ) {
 
-        Text("Search Parking", style = MaterialTheme.typography.headlineMedium)
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp),
 
-        Spacer(modifier = Modifier.height(20.dp))
+            shape = RoundedCornerShape(20.dp),
 
-        OutlinedTextField(
-            value = address,
-            onValueChange = { address = it },
-            label = { Text("Address") }
-        )
+            elevation = CardDefaults.cardElevation(8.dp)
+        ) {
 
-        Spacer(modifier = Modifier.height(10.dp))
+            Column(
+                modifier = Modifier.padding(24.dp)
+            ) {
 
-        OutlinedTextField(
-            value = time,
-            onValueChange = { time = it },
-            label = { Text("Schedule") }
-        )
+                // 🧠 TÍTULO
+                Text(
+                    text = "Buscar parqueadero",
+                    style = MaterialTheme.typography.titleLarge
+                )
 
-        Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
-        Button(onClick = {
+                // 📍 DIRECCIÓN
+                OutlinedTextField(
+                    value = address,
+                    onValueChange = { address = it },
+                    label = { Text("Dirección") },
+                    leadingIcon = {
+                        Icon(Icons.Default.Place, contentDescription = null)
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-            navController.navigate("parking_list")
+                Spacer(modifier = Modifier.height(12.dp))
 
-        }) {
+                // 🕒 HORA
+                OutlinedTextField(
+                    value = time,
+                    onValueChange = { time = it },
+                    label = { Text("Hora (Ej: 14:00)") },
+                    leadingIcon = {
+                        Icon(Icons.Default.AccessTime, contentDescription = null)
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-            Text("Search")
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // 🔍 BOTÓN BUSCAR
+                Button(
+                    onClick = {
+                        navController.navigate("parking_list")
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                ) {
+
+                    Icon(Icons.Default.Search, contentDescription = null)
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Text("Buscar")
+
+                }
+
+            }
 
         }
 

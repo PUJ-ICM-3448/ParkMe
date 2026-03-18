@@ -4,13 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.LocalParking
-import androidx.compose.material.icons.filled.Place
-import androidx.compose.material.icons.filled.AttachMoney
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.parkme.data.mock.MockParkingData
@@ -26,7 +24,12 @@ fun ParkingDetailScreen(
     val parking = MockParkingData.getParkingById(parkingId.toInt())
 
     if (parking == null) {
-        Text("Parking no encontrado")
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text("Parking no encontrado")
+        }
         return
     }
 
@@ -48,7 +51,7 @@ fun ParkingDetailScreen(
 
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = null
                         )
 
                     }
@@ -65,10 +68,10 @@ fun ParkingDetailScreen(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
-                .padding(20.dp)
+                .padding(horizontal = 20.dp, vertical = 16.dp)
         ) {
 
-            // Icono grande
+            // 🧠 HEADER VISUAL
             Box(
                 modifier = Modifier
                     .size(100.dp)
@@ -88,51 +91,91 @@ fun ParkingDetailScreen(
 
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             Text(
                 text = parking.name,
                 style = MaterialTheme.typography.headlineSmall
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            // 📍 DIRECCIÓN CARD
+            Card(
+                shape = RoundedCornerShape(16.dp),
+                elevation = CardDefaults.cardElevation(4.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
 
-                Icon(
-                    imageVector = Icons.Default.Place,
-                    contentDescription = null
-                )
+                Row(
+                    modifier = Modifier.padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
 
-                Spacer(modifier = Modifier.width(8.dp))
+                    Icon(Icons.Default.Place, contentDescription = null)
 
-                Text(parking.address)
+                    Spacer(modifier = Modifier.width(10.dp))
 
-            }
+                    Text(parking.address)
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Row(verticalAlignment = Alignment.CenterVertically) {
-
-                Icon(
-                    imageVector = Icons.Default.AttachMoney,
-                    contentDescription = null
-                )
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                Text("${parking.pricePerHour} COP por hora")
+                }
 
             }
 
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
+            // 💰 PRECIO CARD
+            Card(
+                shape = RoundedCornerShape(16.dp),
+                elevation = CardDefaults.cardElevation(4.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+
+                Row(
+                    modifier = Modifier.padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    Icon(Icons.Default.AttachMoney, contentDescription = null)
+
+                    Spacer(modifier = Modifier.width(10.dp))
+
+                    Text("${parking.pricePerHour} COP por hora")
+
+                }
+
+            }
+
+            Spacer(modifier = Modifier.height(30.dp))
+
+            // 📊 DISPONIBILIDAD
+            val available = parking.totalSpaces - parking.occupiedSpaces
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+
+                Icon(Icons.Default.CheckCircle, contentDescription = null)
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Text("Disponibles: $available / ${parking.totalSpaces}")
+
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            // 🚀 BOTÓN PRINCIPAL (CTA)
             Button(
                 onClick = {
                     navController.navigate("${Routes.RESERVATION}/${parking.id}")
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(55.dp)
             ) {
+
+                Icon(Icons.Default.LocalParking, contentDescription = null)
+
+                Spacer(modifier = Modifier.width(8.dp))
 
                 Text("Reservar parqueadero")
 

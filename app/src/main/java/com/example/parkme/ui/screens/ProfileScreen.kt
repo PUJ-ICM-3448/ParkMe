@@ -1,11 +1,17 @@
 package com.example.parkme.ui.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -26,47 +32,76 @@ fun ProfileScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
+            .background(MaterialTheme.colorScheme.background)
+            .padding(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
+        // 🧠 FOTO PERFIL
         Image(
             painter = painterResource(R.drawable.profile_placeholder),
             contentDescription = null,
             modifier = Modifier
-                .size(120.dp)
+                .size(110.dp)
                 .clip(CircleShape)
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
+        TextButton(onClick = { }) {
+            Text("Cambiar foto (próximamente)")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // 📧 EMAIL
         Text(
             text = user.email,
-            style = MaterialTheme.typography.bodyLarge
+            style = MaterialTheme.typography.bodyMedium
         )
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        OutlinedTextField(
-            value = name,
-            onValueChange = { name = it },
-            label = { Text("Name") }
-        )
+        // 🧠 CARD DE DATOS
+        Card(
+            shape = RoundedCornerShape(16.dp),
+            elevation = CardDefaults.cardElevation(6.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
 
-        if(user.role == "CLIENT"){
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
 
-            Spacer(modifier = Modifier.height(10.dp))
+                // 👤 NOMBRE
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text("Nombre") },
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-            OutlinedTextField(
-                value = plate,
-                onValueChange = { plate = it },
-                label = { Text("Vehicle plate") }
-            )
+                if (user.role == "CLIENT") {
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    // 🚗 PLACA
+                    OutlinedTextField(
+                        value = plate,
+                        onValueChange = { plate = it },
+                        label = { Text("Placa del vehículo") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                }
+
+            }
 
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
+        // 💾 GUARDAR
         Button(
             onClick = {
 
@@ -81,13 +116,22 @@ fun ProfileScreen(navController: NavController) {
                 MockAuth.updateUser(updatedUser)
 
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
         ) {
-            Text("Save changes")
+
+            Icon(Icons.Default.Save, contentDescription = null)
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Text("Guardar cambios")
+
         }
 
         Spacer(modifier = Modifier.height(10.dp))
 
+        // 🚪 LOGOUT
         OutlinedButton(
             onClick = {
 
@@ -96,9 +140,17 @@ fun ProfileScreen(navController: NavController) {
                 navController.navigate(Routes.LOGIN)
 
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
         ) {
-            Text("Logout")
+
+            Icon(Icons.Default.Logout, contentDescription = null)
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Text("Cerrar sesión")
+
         }
 
     }
