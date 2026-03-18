@@ -46,7 +46,7 @@ fun RegisterScreen(navController: NavController) {
                 modifier = Modifier.padding(24.dp)
             ) {
 
-                // 🧠 TÍTULO
+                //  TÍTULO
                 Row(verticalAlignment = Alignment.CenterVertically) {
 
                     Icon(Icons.Default.PersonAdd, contentDescription = null)
@@ -62,7 +62,7 @@ fun RegisterScreen(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                // 👤 NOMBRE
+                //  NOMBRE
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
@@ -72,25 +72,25 @@ fun RegisterScreen(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // 📧 EMAIL
+                // EMAIL
                 OutlinedTextField(
                     value = email,
                     onValueChange = { email = it },
-                    label = { Text("Email") },
+                    label = { Text("Correo") },
                     modifier = Modifier.fillMaxWidth()
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // 🔒 PASSWORD
+                //  PASSWORD
                 OutlinedTextField(
                     value = password,
                     onValueChange = { password = it },
-                    label = { Text("Password") },
+                    label = { Text("Contraseña") },
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                // 🚗 PLACA SOLO CLIENT
+                // PLACA SOLO CLIENT
                 if (role == "CLIENT") {
 
                     Spacer(modifier = Modifier.height(12.dp))
@@ -106,7 +106,7 @@ fun RegisterScreen(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                // 🧠 TIPO DE CUENTA
+                // TIPO DE CUENTA
                 Text(
                     text = "Tipo de cuenta",
                     style = MaterialTheme.typography.bodyMedium
@@ -136,7 +136,7 @@ fun RegisterScreen(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // 🚀 BOTÓN REGISTER
+                // BOTÓN REGISTER
                 Button(
                     onClick = {
 
@@ -168,7 +168,7 @@ fun RegisterScreen(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                // 🔙 VOLVER LOGIN
+                // VOLVER LOGIN
                 TextButton(onClick = {
                     navController.navigate(Routes.LOGIN)
                 }) {

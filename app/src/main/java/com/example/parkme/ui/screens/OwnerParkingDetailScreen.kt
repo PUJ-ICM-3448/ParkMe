@@ -39,7 +39,7 @@ fun OwnerParkingDetailScreen(
                 .padding(horizontal = 16.dp, vertical = 10.dp)
         ) {
 
-            // 🧠 HEADER DEL PARQUEADERO
+            //  HEADER DEL PARQUEADERO
             item {
 
                 Card(
@@ -84,7 +84,7 @@ fun OwnerParkingDetailScreen(
 
             }
 
-            // 🚨 ESTADO VACÍO
+            //  ESTADO VACÍO
             if (reservations.isEmpty()) {
 
                 item {
@@ -122,7 +122,7 @@ fun OwnerParkingDetailScreen(
 
             } else {
 
-                // 👥 LISTA DE CLIENTES
+                //  LISTA DE CLIENTES
                 items(reservations) { reservation ->
 
                     Card(
@@ -139,7 +139,7 @@ fun OwnerParkingDetailScreen(
                             modifier = Modifier.padding(16.dp)
                         ) {
 
-                            // 👤 CLIENTE
+                            // CLIENTE
                             Row(verticalAlignment = Alignment.CenterVertically) {
 
                                 Icon(Icons.Default.Person, contentDescription = null)
@@ -155,7 +155,7 @@ fun OwnerParkingDetailScreen(
 
                             Spacer(modifier = Modifier.height(10.dp))
 
-                            // 🚗 PLACA
+                            //  PLACA
                             Row(verticalAlignment = Alignment.CenterVertically) {
 
                                 Icon(Icons.Default.DirectionsCar, contentDescription = null)
@@ -168,7 +168,7 @@ fun OwnerParkingDetailScreen(
 
                             Spacer(modifier = Modifier.height(6.dp))
 
-                            // ⏰ HORA
+                            //  HORA
                             Row(verticalAlignment = Alignment.CenterVertically) {
 
                                 Icon(Icons.Default.Schedule, contentDescription = null)

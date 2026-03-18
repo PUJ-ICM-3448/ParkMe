@@ -37,7 +37,7 @@ fun ProfileScreen(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        // 🧠 FOTO PERFIL
+        //  FOTO PERFIL
         Image(
             painter = painterResource(R.drawable.profile_placeholder),
             contentDescription = null,
@@ -54,7 +54,7 @@ fun ProfileScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // 📧 EMAIL
+        //  EMAIL
         Text(
             text = user.email,
             style = MaterialTheme.typography.bodyMedium
@@ -62,7 +62,7 @@ fun ProfileScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // 🧠 CARD DE DATOS
+        //  CARD DE DATOS
         Card(
             shape = RoundedCornerShape(16.dp),
             elevation = CardDefaults.cardElevation(6.dp),
@@ -73,7 +73,7 @@ fun ProfileScreen(navController: NavController) {
                 modifier = Modifier.padding(16.dp)
             ) {
 
-                // 👤 NOMBRE
+                //  NOMBRE
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
@@ -85,7 +85,7 @@ fun ProfileScreen(navController: NavController) {
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    // 🚗 PLACA
+                    // PLACA
                     OutlinedTextField(
                         value = plate,
                         onValueChange = { plate = it },
@@ -101,7 +101,7 @@ fun ProfileScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // 💾 GUARDAR
+        // GUARDAR
         Button(
             onClick = {
 
@@ -131,7 +131,7 @@ fun ProfileScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        // 🚪 LOGOUT
+        // LOGOUT
         OutlinedButton(
             onClick = {
 

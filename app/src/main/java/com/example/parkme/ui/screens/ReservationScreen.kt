@@ -12,6 +12,7 @@ import androidx.compose.ui.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import kotlinx.coroutines.launch
 import com.example.parkme.data.mock.*
 import com.example.parkme.data.model.*
 import com.example.parkme.navigation.Routes
@@ -26,12 +27,16 @@ fun ReservationScreen(
 
     var hour by remember { mutableStateOf("") }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Confirmar reserva") }
             )
-        }
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { padding ->
 
         Column(
@@ -42,7 +47,7 @@ fun ReservationScreen(
                 .padding(20.dp)
         ) {
 
-            // 🧠 CARD PARKING
+            //  CARD PARKING
             Card(
                 shape = RoundedCornerShape(16.dp),
                 elevation = CardDefaults.cardElevation(6.dp),
@@ -71,7 +76,7 @@ fun ReservationScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // 🕒 INPUT HORA
+            //  INPUT HORA
             OutlinedTextField(
                 value = hour,
                 onValueChange = { hour = it },
@@ -84,36 +89,51 @@ fun ReservationScreen(
 
             Spacer(modifier = Modifier.height(40.dp))
 
-            // 🚀 BOTÓN CONFIRMAR
+            //  BOTÓN CONFIRMAR
             Button(
                 onClick = {
 
                     val user = MockAuth.currentUser
                     val parking = MockParkingData.getParkingById(parkingId)
 
-                    if (user != null && parking != null && hour.isNotEmpty()) {
-
-                        val reservation = Reservation(
-                            id = System.currentTimeMillis().toInt(),
-                            parkingId = parkingId,
-                            userName = user.name,
-                            plate = user.plate,
-                            hour = hour
-                        )
-
-                        MockReservationData.addReservation(reservation)
-
-                        parking.occupiedSpaces++
-
-                        // 🔔 NOTIFICACIÓN
-                        MockNotificationData.addNotification(
-                            AppNotification(
-                                id = System.currentTimeMillis().toInt(),
-                                text = "${user.name} reservó en ${parking.name} - ${user.plate}",
-                                time = hour
-                            )
-                        )
+                    if (user == null || parking == null || hour.isEmpty()) {
+                        scope.launch {
+                            snackbarHostState.showSnackbar("Completa todos los campos")
+                        }
+                        return@Button
                     }
+
+                    val availableSpaces =
+                        parking.totalSpaces - parking.occupiedSpaces
+
+                    if (availableSpaces <= 0) {
+                        scope.launch {
+                            snackbarHostState.showSnackbar("No hay cupos disponibles")
+                        }
+                        return@Button
+                    }
+
+                    val reservation = Reservation(
+                        id = System.currentTimeMillis().toInt(),
+                        parkingId = parkingId,
+                        userName = user.name,
+                        plate = user.plate,
+                        hour = hour
+                    )
+
+                    MockReservationData.addReservation(reservation)
+                    parking.occupiedSpaces++
+
+                    //  NOTIFICACIÓN CORREGIDA
+                    MockNotificationData.addNotification(
+                        AppNotification(
+                            id = System.currentTimeMillis().toInt(),
+                            text = "${user.name} reservó en ${parking.name}",
+                            time = hour,
+                            userEmail = user.email,
+                            ownerEmail = parking.ownerEmail
+                        )
+                    )
 
                     navController.navigate(Routes.CLIENT_HOME)
 

@@ -71,7 +71,7 @@ fun ParkingDetailScreen(
                 .padding(horizontal = 20.dp, vertical = 16.dp)
         ) {
 
-            // 🧠 HEADER VISUAL
+            //  HEADER VISUAL
             Box(
                 modifier = Modifier
                     .size(100.dp)
@@ -100,7 +100,7 @@ fun ParkingDetailScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // 📍 DIRECCIÓN CARD
+            //  DIRECCIÓN CARD
             Card(
                 shape = RoundedCornerShape(16.dp),
                 elevation = CardDefaults.cardElevation(4.dp),
@@ -124,7 +124,7 @@ fun ParkingDetailScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // 💰 PRECIO CARD
+            //  PRECIO CARD
             Card(
                 shape = RoundedCornerShape(16.dp),
                 elevation = CardDefaults.cardElevation(4.dp),
@@ -148,7 +148,7 @@ fun ParkingDetailScreen(
 
             Spacer(modifier = Modifier.height(30.dp))
 
-            // 📊 DISPONIBILIDAD
+            //  DISPONIBILIDAD
             val available = parking.totalSpaces - parking.occupiedSpaces
 
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -163,7 +163,7 @@ fun ParkingDetailScreen(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // 🚀 BOTÓN PRINCIPAL (CTA)
+            //  BOTÓN PRINCIPAL (CTA)
             Button(
                 onClick = {
                     navController.navigate("${Routes.RESERVATION}/${parking.id}")

@@ -41,7 +41,7 @@ fun SearchByAddressScreen(navController: NavController) {
                 modifier = Modifier.padding(24.dp)
             ) {
 
-                // 🧠 TÍTULO
+                //  TÍTULO
                 Text(
                     text = "Buscar parqueadero",
                     style = MaterialTheme.typography.titleLarge
@@ -49,7 +49,7 @@ fun SearchByAddressScreen(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                // 📍 DIRECCIÓN
+                //  DIRECCIÓN
                 OutlinedTextField(
                     value = address,
                     onValueChange = { address = it },
@@ -62,7 +62,7 @@ fun SearchByAddressScreen(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // 🕒 HORA
+                //  HORA
                 OutlinedTextField(
                     value = time,
                     onValueChange = { time = it },
@@ -75,7 +75,7 @@ fun SearchByAddressScreen(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // 🔍 BOTÓN BUSCAR
+                //  BOTÓN BUSCAR
                 Button(
                     onClick = {
                         navController.navigate("parking_list")

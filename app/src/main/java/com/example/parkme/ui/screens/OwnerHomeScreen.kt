@@ -33,7 +33,7 @@ fun OwnerHomeScreen(navController: NavController) {
             topBar = {
                 TopAppBar(
 
-                    title = { Text("ParkMe Owner") },
+                    title = { Text("ParkMe Arrendador") },
 
                     navigationIcon = {
                         IconButton(onClick = {
@@ -64,7 +64,7 @@ fun OwnerHomeScreen(navController: NavController) {
 
         ) { padding ->
 
-            // 🧠 ESTADO VACÍO PRO
+
             if (myParkings.isEmpty()) {
 
                 Box(
@@ -92,7 +92,7 @@ fun OwnerHomeScreen(navController: NavController) {
                         Spacer(modifier = Modifier.height(6.dp))
 
                         Text(
-                            text = "Empieza creando uno 🚀",
+                            text = "Empieza creando uno ",
                             style = MaterialTheme.typography.bodyMedium
                         )
 
@@ -113,7 +113,7 @@ fun OwnerHomeScreen(navController: NavController) {
                 return@Scaffold
             }
 
-            // 🚀 LISTA PRO
+            // Lista parqueaderos
             LazyColumn(
                 modifier = Modifier
                     .padding(padding)
@@ -145,7 +145,7 @@ fun OwnerHomeScreen(navController: NavController) {
                             modifier = Modifier.padding(16.dp)
                         ) {
 
-                            // 🧠 NOMBRE + DIRECCIÓN
+                            // NOMBRE + DIRECCIÓN
                             Text(
                                 text = parking.name,
                                 style = MaterialTheme.typography.titleLarge
@@ -160,7 +160,7 @@ fun OwnerHomeScreen(navController: NavController) {
 
                             Spacer(modifier = Modifier.height(12.dp))
 
-                            // 📊 DISPONIBILIDAD
+                            //  DISPONIBILIDAD
                             Row(verticalAlignment = Alignment.CenterVertically) {
 
                                 Icon(Icons.Default.CheckCircle, contentDescription = null)
@@ -173,7 +173,7 @@ fun OwnerHomeScreen(navController: NavController) {
 
                             Spacer(modifier = Modifier.height(12.dp))
 
-                            // ➕ ➖ BOTONES MEJORADOS
+                            // BOTONES para sumar y restar cupos de reserva
                             Row {
 
                                 OutlinedButton(onClick = {
@@ -199,7 +199,7 @@ fun OwnerHomeScreen(navController: NavController) {
 
                             Spacer(modifier = Modifier.height(14.dp))
 
-                            // 📩 RESERVAS
+                            //  RESERVAS
                             Row(verticalAlignment = Alignment.CenterVertically) {
 
                                 Icon(Icons.Default.List, contentDescription = null)

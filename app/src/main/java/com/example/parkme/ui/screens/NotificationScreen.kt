@@ -10,13 +10,19 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.*
 import androidx.compose.ui.unit.dp
-import com.example.parkme.data.mock.MockNotificationData
+import com.example.parkme.data.mock.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationScreen() {
 
-    val notifications = MockNotificationData.getNotifications()
+    val user = MockAuth.currentUser ?: return
+
+    val notifications =
+        if (user.role == "CLIENT")
+            MockNotificationData.getNotificationsForUser(user.email)
+        else
+            MockNotificationData.getNotificationsForOwner(user.email)
 
     Scaffold(
         topBar = {
@@ -28,7 +34,7 @@ fun NotificationScreen() {
 
         if (notifications.isEmpty()) {
 
-            // 🧠 ESTADO VACÍO
+            //ESTADO VACÍO
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -89,7 +95,6 @@ fun NotificationScreen() {
                             verticalAlignment = Alignment.CenterVertically
                         ) {
 
-                            // 🔔 ICONO
                             Icon(
                                 imageVector = Icons.Default.Notifications,
                                 contentDescription = null

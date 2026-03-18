@@ -32,7 +32,7 @@ fun ParkingListScreen(navController: NavController) {
 
         if (parkingList.isEmpty()) {
 
-            // 🧠 ESTADO VACÍO PRO
+
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -58,7 +58,7 @@ fun ParkingListScreen(navController: NavController) {
                     Spacer(modifier = Modifier.height(6.dp))
 
                     Text(
-                        text = "Intenta buscar en otra zona 📍",
+                        text = "Intenta buscar en otra zona ",
                         style = MaterialTheme.typography.bodyMedium
                     )
 
@@ -74,7 +74,7 @@ fun ParkingListScreen(navController: NavController) {
                     .fillMaxSize()
             ) {
 
-                // 🧠 HEADER (detalle pro)
+                //  HEADER (detalle pro)
                 Text(
                     text = "Encuentra tu parqueadero",
                     style = MaterialTheme.typography.titleLarge,

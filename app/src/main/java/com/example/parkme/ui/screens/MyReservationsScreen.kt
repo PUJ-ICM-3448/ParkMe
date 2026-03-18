@@ -37,7 +37,7 @@ fun MyReservationsScreen(navController: NavController) {
 
         if (reservations.isEmpty()) {
 
-            // 🧠 ESTADO VACÍO (MUY PRO)
+
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -55,7 +55,7 @@ fun MyReservationsScreen(navController: NavController) {
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
-                        text = "Busca un parqueadero y reserva fácilmente 🚗",
+                        text = "Busca un parqueadero y reserva fácilmente ",
                         style = MaterialTheme.typography.bodyMedium
                     )
 
@@ -98,7 +98,7 @@ fun MyReservationsScreen(navController: NavController) {
                             modifier = Modifier.padding(16.dp)
                         ) {
 
-                            // 🧠 NOMBRE DEL PARQUEADERO
+                            // NOMBRE DEL PARQUEADERO
                             Row(verticalAlignment = Alignment.CenterVertically) {
 
                                 Icon(
@@ -116,7 +116,7 @@ fun MyReservationsScreen(navController: NavController) {
 
                             Spacer(modifier = Modifier.height(12.dp))
 
-                            // 🚗 PLACA
+                            //  PLACA
                             Row(verticalAlignment = Alignment.CenterVertically) {
 
                                 Icon(
@@ -131,7 +131,7 @@ fun MyReservationsScreen(navController: NavController) {
 
                             Spacer(modifier = Modifier.height(6.dp))
 
-                            // ⏰ HORA
+                            //  HORA
                             Row(verticalAlignment = Alignment.CenterVertically) {
 
                                 Icon(
@@ -146,7 +146,7 @@ fun MyReservationsScreen(navController: NavController) {
 
                             Spacer(modifier = Modifier.height(16.dp))
 
-                            // 💬 BOTÓN CHAT
+                            // BOTÓN CHAT
                             Button(
                                 onClick = {
                                     navController.navigate("${Routes.CHAT}/${reservation.parkingId}")

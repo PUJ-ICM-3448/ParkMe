@@ -57,7 +57,7 @@ fun ClientHomeScreen(navController: NavController) {
                         }
                     },
 
-                    // 🎨 COLOR PRO
+
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.primary,
                         titleContentColor = MaterialTheme.colorScheme.onPrimary,
@@ -113,7 +113,7 @@ fun HomeBottomSheet(
     Card(
         modifier = modifier.fillMaxWidth(),
 
-        // 🎨 CARD PRO
+
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
@@ -130,7 +130,7 @@ fun HomeBottomSheet(
             modifier = Modifier.padding(24.dp)
         ) {
 
-            // 🔘 HANDLE
+
             Box(
                 modifier = Modifier
                     .width(40.dp)
@@ -144,7 +144,7 @@ fun HomeBottomSheet(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // 🧠 TÍTULO
+
             Text(
                 text = "Parqueaderos cerca",
                 style = MaterialTheme.typography.titleLarge
@@ -160,7 +160,7 @@ fun HomeBottomSheet(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // 🔍 BOTÓN PRINCIPAL
+            // BOTÓN PRINCIPAL
             Button(
                 onClick = {
                     navController.navigate(Routes.PARKING_LIST)
@@ -178,7 +178,7 @@ fun HomeBottomSheet(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // 📍 BOTÓN SECUNDARIO
+            // BOTÓN SECUNDARIO
             OutlinedButton(
                 onClick = {
                     navController.navigate(Routes.SEARCH_ADDRESS)
@@ -196,7 +196,7 @@ fun HomeBottomSheet(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // 📋 RESERVAS
+            // RESERVAS
             Button(
                 onClick = {
                     navController.navigate(Routes.MY_RESERVATIONS)

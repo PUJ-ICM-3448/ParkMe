@@ -10,7 +10,11 @@ object MockNotificationData {
         notifications.add(notification)
     }
 
-    fun getNotifications(): List<AppNotification> {
-        return notifications.reversed()
+    fun getNotificationsForUser(email: String): List<AppNotification> {
+        return notifications.filter { it.userEmail == email }.reversed()
+    }
+
+    fun getNotificationsForOwner(email: String): List<AppNotification> {
+        return notifications.filter { it.ownerEmail == email }.reversed()
     }
 }

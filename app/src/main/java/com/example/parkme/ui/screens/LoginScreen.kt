@@ -47,7 +47,7 @@ fun LoginScreen(navController: NavController) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                // 🧠 LOGO
+                //  LOGO
                 Image(
                     painter = painterResource(id = R.drawable.parkme_logo),
                     contentDescription = "Logo",
@@ -56,7 +56,7 @@ fun LoginScreen(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // 🧠 TÍTULO
+                // TÍTULO
                 Text(
                     text = "Bienvenido a ParkMe",
                     style = MaterialTheme.typography.titleLarge
@@ -64,27 +64,27 @@ fun LoginScreen(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // 📧 EMAIL
+                //  Correo
                 OutlinedTextField(
                     value = email,
                     onValueChange = { email = it },
-                    label = { Text("Email") },
+                    label = { Text("Correo") },
                     modifier = Modifier.fillMaxWidth()
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // 🔒 PASSWORD
+                //  Contraseña
                 OutlinedTextField(
                     value = password,
                     onValueChange = { password = it },
-                    label = { Text("Password") },
+                    label = { Text("Contraseña") },
                     modifier = Modifier.fillMaxWidth()
                 )
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                // 🔵 BOTÓN LOGIN
+                // BOTÓN LOGIN
                 Button(
                     onClick = {
 
@@ -110,7 +110,7 @@ fun LoginScreen(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                // 🔗 REGISTRO
+                //  REGISTRO
                 TextButton(onClick = {
                     navController.navigate(Routes.REGISTER)
                 }) {
