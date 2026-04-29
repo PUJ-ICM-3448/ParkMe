@@ -1,12 +1,15 @@
 package com.example.parkme.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.navigation.compose.*
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.parkme.sensors.ParkMeSensorState
 import com.example.parkme.data.mock.MockParkingData
 import com.example.parkme.ui.screens.*
 
 @Composable
-fun AppNavigation() {
+fun AppNavigation(sensorState: ParkMeSensorState) {
 
     val navController = rememberNavController()
 
@@ -24,7 +27,10 @@ fun AppNavigation() {
         }
 
         composable(Routes.CLIENT_HOME) {
-            ClientHomeScreen(navController)
+            ClientHomeScreen(
+                navController = navController,
+                sensorState = sensorState
+            )
         }
 
         composable(Routes.OWNER_HOME) {
@@ -44,10 +50,7 @@ fun AppNavigation() {
         }
 
         composable("${Routes.PARKING_DETAIL}/{parkingId}") { backStackEntry ->
-
-            val parkingId =
-                backStackEntry.arguments?.getString("parkingId") ?: ""
-
+            val parkingId = backStackEntry.arguments?.getString("parkingId") ?: ""
             ParkingDetailScreen(
                 navController = navController,
                 parkingId = parkingId
@@ -55,13 +58,8 @@ fun AppNavigation() {
         }
 
         composable("${Routes.RESERVATION}/{parkingId}") { backStackEntry ->
-
-            val parkingId =
-                backStackEntry.arguments?.getString("parkingId")?.toInt() ?: 0
-
-            val parking =
-                MockParkingData.getParkingById(parkingId)
-
+            val parkingId = backStackEntry.arguments?.getString("parkingId")?.toInt() ?: 0
+            val parking = MockParkingData.getParkingById(parkingId)
             ReservationScreen(
                 navController = navController,
                 parkingId = parkingId,
@@ -74,9 +72,7 @@ fun AppNavigation() {
         }
 
         composable("${Routes.CHAT}/{parkingId}") { backStackEntry ->
-
             val id = backStackEntry.arguments?.getString("parkingId")?.toInt() ?: 0
-
             ChatScreen(navController, id)
         }
 
@@ -85,9 +81,7 @@ fun AppNavigation() {
         }
 
         composable("${Routes.OWNER_PARKING_DETAIL}/{parkingId}") { backStackEntry ->
-
             val id = backStackEntry.arguments?.getString("parkingId")?.toInt() ?: 0
-
             OwnerParkingDetailScreen(navController, id)
         }
 
@@ -95,6 +89,20 @@ fun AppNavigation() {
             AddParkingScreen(navController)
         }
 
-    }
+        composable(Routes.SENSORS) {
+            SensorsScreen(navController)
+        }
 
+        composable("${Routes.ROUTE_MAP}/{destLat}/{destLng}/{parkingName}") { backStackEntry ->
+            val destLat = backStackEntry.arguments?.getString("destLat")?.toDoubleOrNull() ?: 0.0
+            val destLng = backStackEntry.arguments?.getString("destLng")?.toDoubleOrNull() ?: 0.0
+            val parkingName = backStackEntry.arguments?.getString("parkingName") ?: "Parqueadero"
+            RouteMapScreen(
+                navController = navController,
+                destLat = destLat,
+                destLng = destLng,
+                parkingName = parkingName
+            )
+        }
+    }
 }

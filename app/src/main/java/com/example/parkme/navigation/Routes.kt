@@ -25,4 +25,9 @@ object Routes {
     const val OWNER_PARKING_DETAIL = "owner_parking_detail"
 
     const val ADD_PARKING = "add_parking"
+
+    const val SENSORS = "com/example/parkme/sensors"
+
+    // ── Ruta del mapa con trayecto desde el usuario hasta el parqueadero ────────
+    const val ROUTE_MAP = "route_map"
 }

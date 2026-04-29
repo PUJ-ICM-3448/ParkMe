@@ -24,44 +24,23 @@ fun ParkingDetailScreen(
     val parking = MockParkingData.getParkingById(parkingId.toInt())
 
     if (parking == null) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text("Parking no encontrado")
         }
         return
     }
 
     Scaffold(
-
         topBar = {
-
             TopAppBar(
-
-                title = {
-                    Text("Detalle del parqueadero")
-                },
-
+                title = { Text("Detalle del parqueadero") },
                 navigationIcon = {
-
-                    IconButton(
-                        onClick = { navController.popBackStack() }
-                    ) {
-
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = null
-                        )
-
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
                     }
-
                 }
-
             )
-
         }
-
     ) { padding ->
 
         Column(
@@ -71,7 +50,7 @@ fun ParkingDetailScreen(
                 .padding(horizontal = 20.dp, vertical = 16.dp)
         ) {
 
-            //  HEADER VISUAL
+            // HEADER VISUAL
             Box(
                 modifier = Modifier
                     .size(100.dp)
@@ -81,89 +60,86 @@ fun ParkingDetailScreen(
                     ),
                 contentAlignment = Alignment.Center
             ) {
-
                 Icon(
                     imageVector = Icons.Default.LocalParking,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier.size(50.dp)
                 )
-
             }
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            Text(
-                text = parking.name,
-                style = MaterialTheme.typography.headlineSmall
-            )
+            Text(text = parking.name, style = MaterialTheme.typography.headlineSmall)
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            //  DIRECCIÓN CARD
+            // DIRECCIÓN
             Card(
                 shape = RoundedCornerShape(16.dp),
                 elevation = CardDefaults.cardElevation(4.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-
                 Row(
                     modifier = Modifier.padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-
                     Icon(Icons.Default.Place, contentDescription = null)
-
                     Spacer(modifier = Modifier.width(10.dp))
-
                     Text(parking.address)
-
                 }
-
             }
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            //  PRECIO CARD
+            // PRECIO
             Card(
                 shape = RoundedCornerShape(16.dp),
                 elevation = CardDefaults.cardElevation(4.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-
                 Row(
                     modifier = Modifier.padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-
                     Icon(Icons.Default.AttachMoney, contentDescription = null)
-
                     Spacer(modifier = Modifier.width(10.dp))
-
                     Text("${parking.pricePerHour} COP por hora")
-
                 }
-
             }
 
-            Spacer(modifier = Modifier.height(30.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
-            //  DISPONIBILIDAD
+            // DISPONIBILIDAD
             val available = parking.totalSpaces - parking.occupiedSpaces
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-
                 Icon(Icons.Default.CheckCircle, contentDescription = null)
-
                 Spacer(modifier = Modifier.width(8.dp))
-
                 Text("Disponibles: $available / ${parking.totalSpaces}")
-
             }
 
             Spacer(modifier = Modifier.weight(1f))
 
-            //  BOTÓN PRINCIPAL (CTA)
+            // ── BOTÓN "CÓMO LLEGAR" — navega al mapa con la ruta
+            OutlinedButton(
+                onClick = {
+                    navController.navigate(
+                        "${Routes.ROUTE_MAP}/${parking.lat}/${parking.lng}/${parking.name}"
+                    )
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+            ) {
+                Icon(Icons.Default.Directions, contentDescription = null)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Cómo llegar")
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // BOTÓN RESERVAR
             Button(
                 onClick = {
                     navController.navigate("${Routes.RESERVATION}/${parking.id}")
@@ -172,17 +148,10 @@ fun ParkingDetailScreen(
                     .fillMaxWidth()
                     .height(55.dp)
             ) {
-
                 Icon(Icons.Default.LocalParking, contentDescription = null)
-
                 Spacer(modifier = Modifier.width(8.dp))
-
                 Text("Reservar parqueadero")
-
             }
-
         }
-
     }
-
 }

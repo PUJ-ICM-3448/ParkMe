@@ -10,6 +10,9 @@ data class Parking(
     val ownerEmail: String,
 
     var totalSpaces: Int,
-    var occupiedSpaces: Int
+    var occupiedSpaces: Int,
 
+    //  Coordenadas para el mapa
+    val lat: Double = 0.0,
+    val lng: Double = 0.0
 )
