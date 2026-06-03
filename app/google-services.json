@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "44059035934",
+    "project_id": "parkme-f280b",
+    "storage_bucket": "parkme-f280b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:44059035934:android:f81e56ccc2c4604c31610f",
+        "android_client_info": {
+          "package_name": "com.example.parkme"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCFHzYerhri1_h0MW-QSH3rKJ_NHjGOQQM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -6,6 +6,7 @@ data class User(
     val email: String,
     val password: String,
     val plate: String,
-    val role: String   // CLIENTE O ARRENDADOR
+    val role: String,                        // "CLIENT" o "OWNER"
+    val profilePhotoPath: String? = null     // Ruta en almacenamiento interno
 
 )

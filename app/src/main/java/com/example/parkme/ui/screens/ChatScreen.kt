@@ -4,35 +4,89 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.parkme.data.mock.*
+import com.example.parkme.data.firebase.FirebaseChatRepository
+import com.example.parkme.data.mock.MockAuth
+import com.example.parkme.data.mock.MockParkingData
 import com.example.parkme.data.model.Message
+import com.example.parkme.notifications.ParkMeNotificationHelper
+import androidx.compose.ui.platform.LocalContext
+import java.text.SimpleDateFormat
+import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(navController: NavController, parkingId: Int) {
 
+    val context     = LocalContext.current
     val currentUser = MockAuth.currentUser
-    var message by remember { mutableStateOf("") }
-    val messages = remember { mutableStateListOf<Message>() }
+    val parking     = MockParkingData.getParkingById(parkingId)
 
-    LaunchedEffect(Unit) {
-        messages.clear()
-        messages.addAll(MockChatData.getMessages(parkingId))
+    var messageText by remember { mutableStateOf("") }
+    var messages    by remember { mutableStateOf<List<Message>>(emptyList()) }
+
+    val listState = rememberLazyListState()
+
+    // ── Escuchar mensajes en tiempo real desde Firebase ───────────────────────
+    LaunchedEffect(parkingId) {
+        FirebaseChatRepository.observeMessages(parkingId).collect { newMessages ->
+            messages = newMessages
+            if (newMessages.isNotEmpty()) {
+                listState.animateScrollToItem(newMessages.size - 1)
+            }
+        }
+    }
+
+    fun sendMessage() {
+        val text = messageText.trim()
+        if (text.isEmpty() || currentUser == null) return
+
+        val timestamp = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
+        val msg = Message(
+            sender    = currentUser.name,
+            senderId  = currentUser.email,
+            text      = text,
+            timestamp = timestamp
+        )
+        FirebaseChatRepository.sendMessage(parkingId, msg)
+
+        // Notificación local al enviar
+        ParkMeNotificationHelper.showChatNotification(
+            context     = context,
+            senderName  = currentUser.name,
+            messageText = text,
+            parkingName = parking?.name ?: "Parqueadero"
+        )
+        messageText = ""
     }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Chat") },
+                title = {
+                    Column {
+                        Text("Chat — ${parking?.name ?: "Parqueadero"}", style = MaterialTheme.typography.titleMedium)
+                        Text("Tiempo real · Firebase", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f))
+                    }
+                },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.Default.ArrowBack, "Volver")
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = Color.White
+                    containerColor    = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
                 )
             )
         }
@@ -45,59 +99,91 @@ fun ChatScreen(navController: NavController, parkingId: Int) {
                 .padding(padding)
         ) {
 
+            // ── Lista de mensajes ─────────────────────────────────────────────
             LazyColumn(
-                modifier = Modifier.weight(1f).padding(10.dp),
-                verticalArrangement = Arrangement.Bottom
+                state   = listState,
+                modifier = Modifier.weight(1f).padding(horizontal = 12.dp, vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 items(messages) { msg ->
-                    val isMe = msg.sender == currentUser?.name
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = if (isMe) Arrangement.End else Arrangement.Start
-                    ) {
-
-                        Box(
-                            modifier = Modifier
-                                .padding(4.dp)
-                                .background(
-                                    if (isMe) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
-                                    RoundedCornerShape(12.dp)
-                                )
-                                .padding(10.dp)
-                        ) {
-                            Text(
-                                msg.text,
-                                color = if (isMe) Color.White else MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-                    }
+                    val isMe = msg.senderId == currentUser?.email
+                    ChatBubble(message = msg, isMe = isMe)
                 }
             }
 
-            Row(Modifier.fillMaxWidth().padding(10.dp)) {
-
+            // ── Input ─────────────────────────────────────────────────────────
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surface)
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 OutlinedTextField(
-                    value = message,
-                    onValueChange = { message = it },
-                    modifier = Modifier.weight(1f),
-                    placeholder = { Text("Mensaje...") }
+                    value         = messageText,
+                    onValueChange = { messageText = it },
+                    modifier      = Modifier.weight(1f),
+                    placeholder   = { Text("Escribe un mensaje...") },
+                    shape         = RoundedCornerShape(24.dp),
+                    maxLines      = 3
                 )
+                Spacer(Modifier.width(8.dp))
+                FloatingActionButton(
+                    onClick        = { sendMessage() },
+                    modifier       = Modifier.size(48.dp),
+                    containerColor = MaterialTheme.colorScheme.primary
+                ) {
+                    Icon(Icons.Default.Send, "Enviar", tint = Color.White)
+                }
+            }
+        }
+    }
+}
 
-                Spacer(modifier = Modifier.width(8.dp))
-
-                Button(onClick = {
-                    val newMsg = Message(
-                        id = System.currentTimeMillis().toInt(),
-                        sender = currentUser?.name ?: "Yo",
-                        text = message,
-                        timestamp = ""
+@Composable
+private fun ChatBubble(message: Message, isMe: Boolean) {
+    Row(
+        modifier              = Modifier.fillMaxWidth(),
+        horizontalArrangement = if (isMe) Arrangement.End else Arrangement.Start
+    ) {
+        Column(horizontalAlignment = if (isMe) Alignment.End else Alignment.Start) {
+            if (!isMe) {
+                Text(
+                    text  = message.sender,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(start = 4.dp, bottom = 2.dp)
+                )
+            }
+            Box(
+                modifier = Modifier
+                    .background(
+                        color = if (isMe) MaterialTheme.colorScheme.primary
+                        else MaterialTheme.colorScheme.surfaceVariant,
+                        shape = RoundedCornerShape(
+                            topStart = 16.dp, topEnd = 16.dp,
+                            bottomStart = if (isMe) 16.dp else 4.dp,
+                            bottomEnd   = if (isMe) 4.dp  else 16.dp
+                        )
                     )
-                    messages.add(newMsg)
-                    MockChatData.sendMessage(parkingId, newMsg)
-                    message = ""
-                }) {
-                    Text("Enviar")
+                    .padding(horizontal = 14.dp, vertical = 10.dp)
+                    .widthIn(max = 260.dp)
+            ) {
+                Column {
+                    Text(
+                        text  = message.text,
+                        color = if (isMe) Color.White else MaterialTheme.colorScheme.onSurface
+                    )
+                    if (message.timestamp.isNotEmpty()) {
+                        Text(
+                            text     = message.timestamp,
+                            style    = MaterialTheme.typography.labelSmall,
+                            color    = if (isMe) Color.White.copy(alpha = 0.7f)
+                            else MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.align(Alignment.End)
+                        )
+                    }
                 }
             }
         }

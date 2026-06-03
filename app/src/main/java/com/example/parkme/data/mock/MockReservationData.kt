@@ -10,12 +10,14 @@ object MockReservationData {
         reservations.add(reservation)
     }
 
-    fun getReservationsByParking(parkingId: Int): List<Reservation> {
-        return reservations.filter { it.parkingId == parkingId }
-    }
+    fun getReservationsForUser(email: String): List<Reservation> =
+        reservations.filter { it.userId == email }
 
-    fun getAllReservations(): List<Reservation> {
-        return reservations
-    }
+    fun getReservationsByParking(parkingId: Int): List<Reservation> =
+        reservations.filter { it.parkingId == parkingId }
 
+    fun getReservationById(id: Int): Reservation? =
+        reservations.find { it.id == id }
+
+    fun getAllReservations(): List<Reservation> = reservations.toList()
 }
