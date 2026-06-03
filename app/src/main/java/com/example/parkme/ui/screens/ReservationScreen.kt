@@ -1,7 +1,12 @@
 package com.example.parkme.ui.screens
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.scaleIn
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -10,6 +15,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -27,18 +35,17 @@ import java.util.*
 @Composable
 fun ReservationScreen(
     navController: NavController,
-    parkingId: Int,
-    parkingName: String
+    parkingId    : Int,
+    parkingName  : String
 ) {
     val context     = LocalContext.current
     val currentUser = MockAuth.currentUser
     val parking     = MockParkingData.getParkingById(parkingId)
 
-    var selectedHours by remember { mutableStateOf(1) }
-    var confirmed     by remember { mutableStateOf(false) }
+    var selectedHours   by remember { mutableStateOf(1) }
+    var confirmed       by remember { mutableStateOf(false) }
     var lastReservation by remember { mutableStateOf<Reservation?>(null) }
 
-    // ── Selector de hora de inicio ────────────────────────────────────────────
     val now = Calendar.getInstance()
     var selectedHour   by remember { mutableStateOf(now.get(Calendar.HOUR_OF_DAY)) }
     var selectedMinute by remember { mutableStateOf(now.get(Calendar.MINUTE)) }
@@ -53,9 +60,7 @@ fun ReservationScreen(
     val pricePerHour = parking?.pricePerHour ?: 5000.0
     val totalPrice   = pricePerHour * selectedHours
     val today        = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
-
-    // Hora formateada para mostrar y guardar
-    val hourDisplay = String.format("%02d:%02d", selectedHour, selectedMinute)
+    val hourDisplay  = String.format("%02d:%02d", selectedHour, selectedMinute)
 
     // Diálogo TimePicker
     if (showTimePicker) {
@@ -63,9 +68,10 @@ fun ReservationScreen(
             onDismissRequest = { showTimePicker = false },
             title            = { Text("Hora de inicio") },
             text             = {
-                Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-                    TimePicker(state = timeState)
-                }
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier            = Modifier.fillMaxWidth()
+                ) { TimePicker(state = timeState) }
             },
             confirmButton = {
                 TextButton(onClick = {
@@ -83,7 +89,20 @@ fun ReservationScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Reservar — $parkingName") },
+                title = {
+                    Column {
+                        Text(
+                            "Reservar",
+                            style      = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            parkingName,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f)
+                        )
+                    }
+                },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.Default.ArrowBack, "Volver")
@@ -103,58 +122,123 @@ fun ReservationScreen(
                 .fillMaxSize()
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
-                .padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .padding(horizontal = 20.dp, vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
 
             if (!confirmed) {
 
-                // ── Datos del usuario ─────────────────────────────────────────
-                Card(shape = RoundedCornerShape(16.dp), elevation = CardDefaults.cardElevation(4.dp), modifier = Modifier.fillMaxWidth()) {
-                    Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Text("Datos del cliente", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                        Text("👤 ${currentUser?.name ?: "—"}")
-                        Text("📧 ${currentUser?.email ?: "—"}")
-                        if (!currentUser?.plate.isNullOrEmpty())
-                            Text("🚗 Placa: ${currentUser?.plate}")
+                // ── Datos del cliente ─────────────────────────────────────────
+                ReservationSectionCard(title = "Datos del cliente") {
+                    ReservationInfoRow(Icons.Default.Person, currentUser?.name ?: "—")
+                    Spacer(Modifier.height(8.dp))
+                    ReservationInfoRow(Icons.Default.Email, currentUser?.email ?: "—")
+                    if (!currentUser?.plate.isNullOrEmpty()) {
+                        Spacer(Modifier.height(8.dp))
+                        ReservationInfoRow(Icons.Default.DirectionsCar, "Placa: ${currentUser?.plate}")
                     }
                 }
 
                 // ── Hora de inicio ────────────────────────────────────────────
-                Card(shape = RoundedCornerShape(16.dp), elevation = CardDefaults.cardElevation(4.dp), modifier = Modifier.fillMaxWidth()) {
-                    Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        Text("Hora de inicio", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                        Row(
-                            verticalAlignment    = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            modifier             = Modifier.fillMaxWidth()
-                        ) {
-                            Icon(Icons.Default.Schedule, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
-                            Text(
-                                text  = hourDisplay,
-                                style = MaterialTheme.typography.headlineSmall,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Spacer(Modifier.weight(1f))
-                            OutlinedButton(onClick = { showTimePicker = true }) {
-                                Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(16.dp))
-                                Spacer(Modifier.width(6.dp))
-                                Text("Cambiar")
+                ReservationSectionCard(title = "Hora de inicio") {
+                    Row(
+                        verticalAlignment     = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier              = Modifier.fillMaxWidth()
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(
+                                modifier        = Modifier
+                                    .size(48.dp)
+                                    .clip(RoundedCornerShape(14.dp))
+                                    .background(MaterialTheme.colorScheme.primaryContainer),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    Icons.Default.Schedule,
+                                    contentDescription = null,
+                                    tint               = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    modifier           = Modifier.size(24.dp)
+                                )
                             }
+                            Spacer(Modifier.width(14.dp))
+                            Text(
+                                text       = hourDisplay,
+                                style      = MaterialTheme.typography.headlineMedium,
+                                fontWeight = FontWeight.Bold,
+                                color      = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                        OutlinedButton(
+                            onClick = { showTimePicker = true },
+                            shape   = RoundedCornerShape(12.dp)
+                        ) {
+                            Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(16.dp))
+                            Spacer(Modifier.width(6.dp))
+                            Text("Cambiar")
                         }
                     }
                 }
 
-                // ── Selección de horas ────────────────────────────────────────
-                Card(shape = RoundedCornerShape(16.dp), elevation = CardDefaults.cardElevation(4.dp), modifier = Modifier.fillMaxWidth()) {
-                    Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        Text("Duración de la reserva", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                            OutlinedButton(onClick = { if (selectedHours > 1) selectedHours-- }) { Text("−") }
-                            Text("$selectedHours hora(s)", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-                            OutlinedButton(onClick = { if (selectedHours < 12) selectedHours++ }) { Text("+") }
+                // ── Duración ──────────────────────────────────────────────────
+                ReservationSectionCard(title = "Duración") {
+                    Row(
+                        verticalAlignment     = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                        modifier              = Modifier.fillMaxWidth()
+                    ) {
+                        FilledTonalIconButton(
+                            onClick = { if (selectedHours > 1) selectedHours-- },
+                            shape   = RoundedCornerShape(12.dp)
+                        ) {
+                            Icon(Icons.Default.Remove, contentDescription = "Menos")
                         }
-                        Text("Total: $${totalPrice.toInt()} COP", style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier            = Modifier.padding(horizontal = 24.dp)
+                        ) {
+                            Text(
+                                text       = "$selectedHours",
+                                style      = MaterialTheme.typography.displaySmall,
+                                fontWeight = FontWeight.Bold,
+                                color      = MaterialTheme.colorScheme.primary
+                            )
+                            Text(
+                                text  = if (selectedHours == 1) "hora" else "horas",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+
+                        FilledTonalIconButton(
+                            onClick = { if (selectedHours < 12) selectedHours++ },
+                            shape   = RoundedCornerShape(12.dp)
+                        ) {
+                            Icon(Icons.Default.Add, contentDescription = "Más")
+                        }
+                    }
+
+                    Spacer(Modifier.height(14.dp))
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
+                    Spacer(Modifier.height(14.dp))
+
+                    Row(
+                        modifier              = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment     = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text  = "Total a pagar",
+                            style = MaterialTheme.typography.titleSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Text(
+                            text       = "$${totalPrice.toInt()} COP",
+                            style      = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            color      = MaterialTheme.colorScheme.primary
+                        )
                     }
                 }
 
@@ -177,9 +261,7 @@ fun ReservationScreen(
                         )
                         MockReservationData.addReservation(reservation)
                         lastReservation = reservation
-                        confirmed = true
-
-                        // Notificación de reserva confirmada
+                        confirmed       = true
                         ParkMeNotificationHelper.showReservationNotification(
                             context     = context,
                             parkingName = parkingName,
@@ -187,57 +269,180 @@ fun ReservationScreen(
                             hours       = selectedHours
                         )
                     },
-                    modifier = Modifier.fillMaxWidth().height(55.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    shape = RoundedCornerShape(16.dp)
                 ) {
-                    Icon(Icons.Default.CheckCircle, null)
-                    Spacer(Modifier.width(8.dp))
-                    Text("Confirmar reserva — $${totalPrice.toInt()} COP")
+                    Icon(Icons.Default.CheckCircle, null, modifier = Modifier.size(20.dp))
+                    Spacer(Modifier.width(10.dp))
+                    Text(
+                        "Confirmar — $${totalPrice.toInt()} COP",
+                        fontWeight = FontWeight.SemiBold,
+                        style      = MaterialTheme.typography.titleSmall
+                    )
                 }
 
             } else {
 
-                // ── Confirmación + QR ─────────────────────────────────────────
-                Card(
-                    shape     = RoundedCornerShape(20.dp),
-                    elevation = CardDefaults.cardElevation(8.dp),
-                    modifier  = Modifier.fillMaxWidth(),
-                    colors    = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                // ── Confirmación animada ──────────────────────────────────────
+                AnimatedVisibility(
+                    visible = confirmed,
+                    enter   = fadeIn() + scaleIn()
                 ) {
-                    Column(
-                        modifier            = Modifier.padding(24.dp).fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    Card(
+                        shape   = RoundedCornerShape(24.dp),
+                        colors  = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer
+                        ),
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Icon(Icons.Default.CheckCircle, null, modifier = Modifier.size(56.dp), tint = MaterialTheme.colorScheme.primary)
-                        Text("¡Reserva Confirmada!", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-                        Text(parkingName, style = MaterialTheme.typography.titleMedium)
-                        Text("🕐 Hora de inicio: $hourDisplay")
-                        Text("$selectedHours hora(s) · $${totalPrice.toInt()} COP")
+                        Column(
+                            modifier            = Modifier
+                                .fillMaxWidth()
+                                .padding(28.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Box(
+                                modifier        = Modifier
+                                    .size(72.dp)
+                                    .clip(CircleShape)
+                                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    Icons.Default.CheckCircle,
+                                    null,
+                                    modifier = Modifier.size(40.dp),
+                                    tint     = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                            Spacer(Modifier.height(16.dp))
+                            Text(
+                                "¡Reserva Confirmada!",
+                                style      = MaterialTheme.typography.headlineSmall,
+                                fontWeight = FontWeight.Bold,
+                                color      = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                            Spacer(Modifier.height(6.dp))
+                            Text(
+                                parkingName,
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                            Spacer(Modifier.height(16.dp))
+                            HorizontalDivider(
+                                color    = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.2f)
+                            )
+                            Spacer(Modifier.height(14.dp))
+                            Row(
+                                modifier              = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceEvenly
+                            ) {
+                                ConfirmationDetail(
+                                    icon  = Icons.Default.Schedule,
+                                    value = hourDisplay,
+                                    label = "Hora inicio"
+                                )
+                                ConfirmationDetail(
+                                    icon  = Icons.Default.Timelapse,
+                                    value = "$selectedHours h",
+                                    label = "Duración"
+                                )
+                                ConfirmationDetail(
+                                    icon  = Icons.Default.AttachMoney,
+                                    value = "$${totalPrice.toInt()}",
+                                    label = "Total COP"
+                                )
+                            }
+                        }
                     }
                 }
 
-                // Botón para ver QR
                 lastReservation?.let { reservation ->
                     Button(
                         onClick  = { navController.navigate("${Routes.QR_CODE}/${reservation.id}") },
-                        modifier = Modifier.fillMaxWidth().height(55.dp),
-                        colors   = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(52.dp),
+                        shape  = RoundedCornerShape(14.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondary
+                        )
                     ) {
-                        Icon(Icons.Default.QrCode, null)
+                        Icon(Icons.Default.QrCode, null, modifier = Modifier.size(20.dp))
                         Spacer(Modifier.width(8.dp))
-                        Text("Ver QR de acceso")
+                        Text("Ver QR de acceso", fontWeight = FontWeight.SemiBold)
                     }
                 }
 
                 OutlinedButton(
                     onClick  = { navController.navigate(Routes.CLIENT_HOME) },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp),
+                    shape = RoundedCornerShape(14.dp)
                 ) {
-                    Icon(Icons.Default.Home, null)
+                    Icon(Icons.Default.Home, null, modifier = Modifier.size(20.dp))
                     Spacer(Modifier.width(8.dp))
                     Text("Volver al inicio")
                 }
             }
         }
+    }
+}
+
+// ── Tarjeta de sección ────────────────────────────────────────────────────────
+@Composable
+fun ReservationSectionCard(
+    title  : String,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    ElevatedCard(
+        shape     = RoundedCornerShape(20.dp),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 3.dp),
+        modifier  = Modifier.fillMaxWidth()
+    ) {
+        Column(modifier = Modifier.padding(18.dp)) {
+            Text(
+                text       = title,
+                style      = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.SemiBold,
+                color      = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(Modifier.height(12.dp))
+            content()
+        }
+    }
+}
+
+// ── Fila de información ───────────────────────────────────────────────────────
+@Composable
+fun ReservationInfoRow(icon: ImageVector, text: String) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Icon(
+            icon,
+            contentDescription = null,
+            tint               = MaterialTheme.colorScheme.primary,
+            modifier           = Modifier.size(18.dp)
+        )
+        Spacer(Modifier.width(10.dp))
+        Text(text, style = MaterialTheme.typography.bodyMedium)
+    }
+}
+
+// ── Detalle en confirmación ───────────────────────────────────────────────────
+@Composable
+fun ConfirmationDetail(icon: ImageVector, value: String, label: String) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Icon(
+            icon,
+            contentDescription = null,
+            tint               = MaterialTheme.colorScheme.primary,
+            modifier           = Modifier.size(20.dp)
+        )
+        Spacer(Modifier.height(4.dp))
+        Text(value, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+        Text(label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }

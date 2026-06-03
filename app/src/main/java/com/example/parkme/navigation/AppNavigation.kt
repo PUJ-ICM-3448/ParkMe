@@ -121,5 +121,15 @@ fun AppNavigation(sensorState: ParkMeSensorState) {
                 QrScreen(navController = navController, reservation = reservation)
             }
         }
+        composable("${Routes.OWNER_QR_SCANNER}/{reservationId}") { back ->
+
+            val reservationId =
+                back.arguments?.getString("reservationId")?.toIntOrNull() ?: 0
+
+            OwnerQrScannerScreen(
+                navController = navController,
+                reservationId = reservationId
+            )
+        }
     }
 }

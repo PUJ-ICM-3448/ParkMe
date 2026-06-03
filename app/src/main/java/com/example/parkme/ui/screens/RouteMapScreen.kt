@@ -32,7 +32,7 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.net.URL
 
-private const val DIRECTIONS_API_KEY = "AIzaSyBpxMlFDoFFac28_SGTlq17ctqSBTKt_aQ"
+private const val DIRECTIONS_API_KEY = "AIzaSyA3M_mN6o48_lYY7SyIiKfqlrLTIwH72DE"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

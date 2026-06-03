@@ -20,4 +20,5 @@ object Routes {
     const val USER_TRACKING       = "user_tracking"
     // NUEVO
     const val QR_CODE             = "qr_code"
+    const val OWNER_QR_SCANNER = "owner_qr_scanner"
 }
